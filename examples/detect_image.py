@@ -105,6 +105,8 @@ def main():
 
         except Exception as e:
             lg.error(e)
+            if args.debug:
+                raise e
 
 
 if __name__ == '__main__':
