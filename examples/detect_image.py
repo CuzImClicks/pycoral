@@ -57,6 +57,8 @@ def main():
     interpreter = make_interpreter(args.model)
     interpreter.allocate_tensors()
 
+    lg.info(f"Running model: {args.model.split('.')[0]}")
+
     # start inference
     while True:
         try:
@@ -64,7 +66,7 @@ def main():
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
                 for index, file in enumerate(new_files):
-                    lg.info(f"[{index:3d}/{len(new_files)}] - {file:>}")
+                    lg.info(f"[{index:2d}/{len(new_files)}] - {Colors.CYAN.value}{file:>}")
                     lg.info(f"{Colors.CYAN.value}{file}")
                     image = Image.open(f"./input/{file}")
                     _, scale = common.set_resized_input(
@@ -87,17 +89,17 @@ def main():
 
                     for obj in objs:
                         lg.info(f"{Colors.BOLD.value}{Colors.GREEN.value}{labels.get(obj.id, obj.id)}")
-                        lg.info(f'  id:    {Colors.BOLD.value}{obj.id:>22}')
-                        lg.info(f'  score: {Colors.BOLD.value}{obj.score:>22}')
+                        lg.info(f'  id:    {Colors.BOLD.value}{Colors.GREEN.value}{obj.id:>22}')
+                        lg.info(f'  score: {Colors.BOLD.value}{Colors.GREEN.value}{obj.score:>22}')
                         # lg.info(f'  bbox:  {Colors.BOLD.value}{obj.bbox}')
 
                     image = image.convert('RGB')
                     draw_objects(ImageDraw.Draw(image), objs, labels)
                     image.save(f"./output/{file}")
 
-                    lg.info(f"Deleted the source file for {file}")
+                    lg.info(f"{Colors.CYAN.value}Deleted the source file for {file}")
                     os.remove(f"./input/{file}")
-                    lg.info("\n"*2)
+                    print("\n"*2)
 
             time.sleep(10)
 

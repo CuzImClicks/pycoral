@@ -3,6 +3,8 @@
 from enum import Enum
 from typing import Callable
 from datetime import datetime
+import os
+
 
 class Colors(Enum):
     """Colors for the terminal
@@ -74,8 +76,26 @@ class Colors(Enum):
         return f"\033[38;2;{red};{green};{blue}m"
 
 
-class Logger:
+class FileHandler:
 
+    def __init__(self, loc: str = ""):
+        self.loc = loc
+        directory = loc.split("/")
+        del directory[-1]
+        self.directory = "".join([f"{path}/" for path in directory])
+
+    def save(self, content: str):
+        self.create_and_append(content, self.loc)
+
+    def create_and_append(self, content: str, loc: str):
+        if not os.path.exists(self.directory):
+            os.mkdir(self.directory)
+        with open(loc, "a+") as f:
+            f.write(content + "\n")
+            f.close()
+
+
+class Logger:
     class Level(Enum):
         """The level of the log message
 
@@ -87,7 +107,6 @@ class Logger:
         INFO = 2
         WARNING = 3
         ERROR = 4
-
 
     # Default colors for the different levels
     __default_colors = {
@@ -103,7 +122,8 @@ class Logger:
         return Logger.__default_colors.copy()
 
     @staticmethod
-    def default_formatter(text, level: Level = Level.INFO, name: str = __name__, colors: dict = __default_colors) -> str:
+    def default_formatter(text, level: Level = Level.INFO, name: str = __name__,
+                          colors: dict = __default_colors) -> str:
         """The default log formatter
 
         Args:
@@ -117,7 +137,8 @@ class Logger:
         return f"{name} - {level.name}: {colors.get(level.name, '')}{str(text)}"
 
     @staticmethod
-    def minecraft_formatter(text, level: Level = Level.INFO, name: str = __name__, colors: dict = __default_colors) -> str:
+    def minecraft_formatter(text, level: Level = Level.INFO, name: str = __name__,
+                            colors: dict = __default_colors) -> str:
         """The default log formatter for Minecraft
 
         Args:
@@ -132,7 +153,7 @@ class Logger:
 
     def __init__(self, name: str = __name__, level: Level = Level.INFO,
                  formatter: Callable[[str, Level, str, dict], str] = default_formatter,
-                 level_colors: dict = __default_colors):
+                 level_colors: dict = __default_colors, fh: FileHandler = None):
         """A simple logger with color support and logging levels
 
         Args:
@@ -145,6 +166,10 @@ class Logger:
         self.formatter = formatter
         self.level = level
         self.colors = level_colors
+        self.fh = fh
+
+    def format_text(self, text: str, level: Level):
+        return f"{self.formatter(str(text), level, self.name, self.colors)}{Colors.RESET.value}"
 
     def log(self, text="", level: Level = Level.LOG):
         """Logs the given text to the console
@@ -153,8 +178,13 @@ class Logger:
             text (any): The text to log
             level (Level, optional): The level to use for logging. Defaults to Level.LOG.
         """
+        formatted = self.format_text(text, level)
         if self.level.value <= level.value:
-            print(f"{self.formatter(str(text), level, self.name, self.colors)}{Colors.RESET.value}")
+            print(formatted)
+            self.fh.save(formatted)
+
+        if level == Logger.Level.ERROR and self.fh is not None:
+            self.fh.create_and_append(formatted, f"{self.fh.directory}/error.log")
 
     def debug(self, text=""):
         """Logs a message at the Level.DEBUG level
@@ -192,7 +222,9 @@ class Logger:
 # Testing
 if __name__ == "__main__":
 
-    lg = Logger("Logger Test", level=Logger.Level.LOG, formatter=Logger.minecraft_formatter)
+
+
+    lg = Logger("Logger Test", level=Logger.Level.LOG, formatter=Logger.minecraft_formatter, fh=FileHandler("./logs/log.log"))
 
     for color in Colors:
         lg.log(f"{color.value}{color.name}")
