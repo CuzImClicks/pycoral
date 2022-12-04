@@ -87,6 +87,7 @@ def main():
                         lg.info(f"{inference_time.split('.')[0]:>20}ms")
 
                     lg.info('-------RESULTS--------')
+
                     if not objs:
                         lg.warning('No objects detected')
 
@@ -97,8 +98,11 @@ def main():
                         # lg.info(f'  bbox:  {Colors.BOLD.value}{obj.bbox}')
 
                     image = image.convert('RGB')
-                    draw_objects(ImageDraw.Draw(image), objs, labels)
-                    image.save(f"./output/{file}")
+                    if not objs:
+                        image.save(f"./empty/{file}")
+                    else:
+                        draw_objects(ImageDraw.Draw(image), objs, labels)
+                        image.save(f"./output/{file}")
 
                     lg.info(f"{Colors.CYAN.value}Deleted the source file for {file}")
                     os.remove(f"./input/{file}")
