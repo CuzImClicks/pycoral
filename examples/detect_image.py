@@ -25,7 +25,7 @@ from pycoral.adapters import detect
 from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 
-from Logger import Logger
+from Logger import Logger, Colors
 
 
 def draw_objects(draw, objs, labels):
@@ -64,6 +64,8 @@ def main():
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
                 for index, file in enumerate(new_files):
+                    lg.info(f"\r[{index:3d}/{len(new_files)}] - {file:>}")
+                    lg.info(f"{Colors.CYAN}{file}")
                     image = Image.open(f"./input/{file}")
                     _, scale = common.set_resized_input(
                         interpreter, image.size, lambda size: image.resize(size, Image.ANTIALIAS))
@@ -71,22 +73,23 @@ def main():
                     lg.info('----INFERENCE TIME----')
                     lg.debug('Note: The first inference is slow because it includes loading the model into Edge TPU '
                              'memory.')
-                    for _ in range(args.count):
+                    for i in range(args.count):
                         start = time.perf_counter()
                         interpreter.invoke()
                         inference_time = time.perf_counter() - start
                         objs = detect.get_objects(interpreter, args.threshold, scale)
-                        lg.info('%.2f ms' % (inference_time * 1000))
+
+                        lg.info(f"{inference_time * 1000:>22}ms")
 
                     lg.info('-------RESULTS--------')
                     if not objs:
                         lg.warning('No objects detected')
 
                     for obj in objs:
-                        lg.info(labels.get(obj.id, obj.id))
-                        lg.info(f'  id:    {obj.id}')
-                        lg.info(f'  score: {obj.score}')
-                        lg.info(f'  bbox:  {obj.bbox}')
+                        lg.info(f"{Colors.BOLD}{Colors.GREEN.value}{labels.get(obj.id, obj.id)}")
+                        lg.info(f'  id:    {Colors.BOLD.value}{obj.id:>22}')
+                        lg.info(f'  score: {Colors.BOLD.value}{obj.score:>22}')
+                        # lg.info(f'  bbox:  {Colors.BOLD.value}{obj.bbox}')
 
                     image = image.convert('RGB')
                     draw_objects(ImageDraw.Draw(image), objs, labels)
@@ -103,5 +106,7 @@ def main():
 
 
 if __name__ == '__main__':
-    lg = Logger("ObjectDetection", formatter=Logger.minecraft_formatter)
+    colors = Logger.get_default_colors()
+    colors["INFO"] = ""
+    lg = Logger("ObjectDetection", formatter=Logger.minecraft_formatter, level_colors=colors)
     main()
