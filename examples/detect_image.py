@@ -41,17 +41,17 @@ def draw_objects(draw, objs, labels):
 def main():
 
     labels = read_label_file("test_data/coco_labels.txt")
-    interpreter = make_interpreter("test_data/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite")
+    interpreter = make_interpreter("test_data/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite")
     interpreter.allocate_tensors()
 
     # start inference
     while True:
         try:
-            new_files = [f"./input/{file}" for file in os.listdir("./input") if file.endswith(".jpg")]
+            new_files = [file for file in os.listdir("./input") if file.endswith(".jpg")]
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
                 for file in new_files:
-                    image = Image.open(file)
+                    image = Image.open(f"./input/{file}")
                     _, scale = common.set_resized_input(
                         interpreter, image.size, lambda size: image.resize(size, Image.ANTIALIAS))
 
