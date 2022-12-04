@@ -46,7 +46,7 @@ def main():
                         help='File path of .tflite file', type=str, default="test_data/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite")
     parser.add_argument('-l', '--labels', help='File path of labels file', type=str, default="test_data/coco_labels.txt")
     parser.add_argument("-t", "--threshold", help="Score threshold for detected objects", type=float, default=0.4)
-    parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=10)
+    parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=1)
     parser.add_argument("-d", "--debug", help="Debug output", type=bool, default=False)
     args = parser.parse_args()
 
@@ -64,8 +64,8 @@ def main():
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
                 for index, file in enumerate(new_files):
-                    lg.info(f"\r[{index:3d}/{len(new_files)}] - {file:>}")
-                    lg.info(f"{Colors.CYAN}{file}")
+                    lg.info(f"[{index:3d}/{len(new_files)}] - {file:>}")
+                    lg.info(f"{Colors.CYAN.value}{file}")
                     image = Image.open(f"./input/{file}")
                     _, scale = common.set_resized_input(
                         interpreter, image.size, lambda size: image.resize(size, Image.ANTIALIAS))
@@ -76,17 +76,17 @@ def main():
                     for i in range(args.count):
                         start = time.perf_counter()
                         interpreter.invoke()
-                        inference_time = time.perf_counter() - start
+                        inference_time = str((time.perf_counter() - start) * 1000)
                         objs = detect.get_objects(interpreter, args.threshold, scale)
 
-                        lg.info(f"{inference_time * 1000:>22}ms")
+                        lg.info(f"{inference_time.split('.')[0]:>20}ms")
 
                     lg.info('-------RESULTS--------')
                     if not objs:
                         lg.warning('No objects detected')
 
                     for obj in objs:
-                        lg.info(f"{Colors.BOLD}{Colors.GREEN.value}{labels.get(obj.id, obj.id)}")
+                        lg.info(f"{Colors.BOLD.value}{Colors.GREEN.value}{labels.get(obj.id, obj.id)}")
                         lg.info(f'  id:    {Colors.BOLD.value}{obj.id:>22}')
                         lg.info(f'  score: {Colors.BOLD.value}{obj.score:>22}')
                         # lg.info(f'  bbox:  {Colors.BOLD.value}{obj.bbox}')
