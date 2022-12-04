@@ -47,9 +47,9 @@ def main():
     parser.add_argument('-l', '--labels', help='File path of labels file', type=str, default="test_data/coco_labels.txt")
     parser.add_argument("-t", "--threshold", help="Score threshold for detected objects", type=float, default=0.4)
     parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=1)
-    parser.add_argument("-d", "--debug", help="Debug output", type=bool, default=False)
+    parser.add_argument("-d", "--debug", help="Debug output", action="store_true")
     parser.add_argument("-a", "--amount", help="Limit the amount of images computed", type=int, default=-1)
-    parser.add_argument("-s", "--save", help="Save empty images", type=bool, default=False)
+    parser.add_argument("-s", "--save", help="Save empty images", action="store_true")
     args = parser.parse_args()
 
     if args.debug:
@@ -105,7 +105,7 @@ def main():
                         if not os.path.exists("./empty"):
                             os.mkdir("./empty")
                         image.save(f"./empty/{file}")
-                    else:
+                    elif objs:
                         if not os.path.exists("./output"):
                             os.mkdir("./output")
                         draw_objects(ImageDraw.Draw(image), objs, labels)
