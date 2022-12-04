@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 import os
 import time
 
@@ -39,9 +40,21 @@ def draw_objects(draw, objs, labels):
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-m', '--model',
+                        help='File path of .tflite file', type=str, default="test_data/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite")
+    parser.add_argument('-l', '--labels', help='File path of labels file', type=str, default="test_data/coco_labels.txt")
+    parser.add_argument("-t", "--threshold", "Score threshold for detected objects", type=float, default=0.4)
+    parser.add_argument("-c", "--count", "Number of times to run inference", type=int, default=10)
+    parser.add_argument("-d", "--debug", "Debug output", type=bool, default=False)
+    args = parser.parse_args()
 
-    labels = read_label_file("test_data/coco_labels.txt")
-    interpreter = make_interpreter("test_data/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite")
+    if args.debug:
+        lg.level = Logger.Level.DEBUG
+
+    labels = read_label_file(args.labels)
+    interpreter = make_interpreter(args.model)
     interpreter.allocate_tensors()
 
     # start inference
@@ -50,7 +63,7 @@ def main():
             new_files = [file for file in os.listdir("./input") if file.endswith(".jpg")]
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
-                for file in new_files:
+                for index, file in enumerate(new_files):
                     image = Image.open(f"./input/{file}")
                     _, scale = common.set_resized_input(
                         interpreter, image.size, lambda size: image.resize(size, Image.ANTIALIAS))
@@ -58,11 +71,11 @@ def main():
                     lg.info('----INFERENCE TIME----')
                     lg.debug('Note: The first inference is slow because it includes loading the model into Edge TPU '
                              'memory.')
-                    for _ in range(5):
+                    for _ in range(args.count):
                         start = time.perf_counter()
                         interpreter.invoke()
                         inference_time = time.perf_counter() - start
-                        objs = detect.get_objects(interpreter, 0.4, scale)
+                        objs = detect.get_objects(interpreter, args.threshold, scale)
                         lg.info('%.2f ms' % (inference_time * 1000))
 
                     lg.info('-------RESULTS--------')
@@ -80,7 +93,7 @@ def main():
                     image.save(f"./output/{file}")
 
                     lg.info(f"Deleted the source file for {file}")
-                    os.remove(file)
+                    os.remove(f"./input/{file}")
                     lg.info("\n"*2)
 
             time.sleep(10)
