@@ -45,9 +45,9 @@ def main():
     parser.add_argument('-m', '--model',
                         help='File path of .tflite file', type=str, default="test_data/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite")
     parser.add_argument('-l', '--labels', help='File path of labels file', type=str, default="test_data/coco_labels.txt")
-    parser.add_argument("-t", "--threshold", "Score threshold for detected objects", type=float, default=0.4)
-    parser.add_argument("-c", "--count", "Number of times to run inference", type=int, default=10)
-    parser.add_argument("-d", "--debug", "Debug output", type=bool, default=False)
+    parser.add_argument("-t", "--threshold", help="Score threshold for detected objects", type=float, default=0.4)
+    parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=10)
+    parser.add_argument("-d", "--debug", help="Debug output", type=bool, default=False)
     args = parser.parse_args()
 
     if args.debug:
