@@ -58,8 +58,8 @@ function get_classification() {
 function get_detection() {
   download \
     "ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite" \
-    "coco_labels.txt" \
-    "grace_hopper.bmp"
+    "ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite" \
+    "coco_labels.txt"
 }
 
 function get_imprinting() {
