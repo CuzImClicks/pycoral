@@ -49,6 +49,7 @@ def main():
     parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=1)
     parser.add_argument("-d", "--debug", help="Debug output", type=bool, default=False)
     parser.add_argument("-a", "--amount", help="Limit the amount of images computed", type=int, default=-1)
+    parser.add_argument("-s", "--save", help="Save empty images", type=bool, default=False)
     args = parser.parse_args()
 
     if args.debug:
@@ -63,6 +64,8 @@ def main():
     # start inference
     while True:
         try:
+            if not os.path.exists("./input"):
+                os.mkdir("./input")
             new_files = [file for file in os.listdir("./input") if file.endswith(".jpg")]
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
@@ -98,9 +101,13 @@ def main():
                         # lg.info(f'  bbox:  {Colors.BOLD.value}{obj.bbox}')
 
                     image = image.convert('RGB')
-                    if not objs:
+                    if not objs and args.save:
+                        if not os.path.exists("./empty"):
+                            os.mkdir("./empty")
                         image.save(f"./empty/{file}")
                     else:
+                        if not os.path.exists("./output"):
+                            os.mkdir("./output")
                         draw_objects(ImageDraw.Draw(image), objs, labels)
                         image.save(f"./output/{file}")
 
