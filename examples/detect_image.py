@@ -25,7 +25,7 @@ from pycoral.adapters import detect
 from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 
-from Logger import Logger, Colors
+from Logger import Logger, Colors, FileHandler
 
 
 def draw_objects(draw, objs, labels):
@@ -110,5 +110,5 @@ def main():
 if __name__ == '__main__':
     colors = Logger.get_default_colors()
     colors["INFO"] = ""
-    lg = Logger("ObjectDetection", formatter=Logger.minecraft_formatter, level_colors=colors)
+    lg = Logger("ObjectDetection", formatter=Logger.minecraft_formatter, level_colors=colors, fh=FileHandler("logs/log.log"))
     main()
