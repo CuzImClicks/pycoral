@@ -48,6 +48,7 @@ def main():
     parser.add_argument("-t", "--threshold", help="Score threshold for detected objects", type=float, default=0.4)
     parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=1)
     parser.add_argument("-d", "--debug", help="Debug output", type=bool, default=False)
+    parser.add_argument("-a", "--amount", help="Limit the amount of images computed", type=int, default=-1)
     args = parser.parse_args()
 
     if args.debug:
@@ -66,6 +67,8 @@ def main():
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
                 for index, file in enumerate(new_files):
+                    if index > args.amount:
+                        break
                     lg.info(f"[{index:2d}/{len(new_files)}] - {Colors.CYAN.value}{file:>}")
                     lg.info(f"{Colors.CYAN.value}{file}")
                     image = Image.open(f"./input/{file}")
