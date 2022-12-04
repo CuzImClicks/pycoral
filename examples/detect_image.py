@@ -83,6 +83,8 @@ def main():
                     os.remove(file)
                     lg.info("\n"*2)
 
+            time.sleep(10)
+
         except Exception as e:
             lg.error(e)
 
