@@ -48,6 +48,7 @@ def main():
     parser.add_argument("-t", "--threshold", help="Score threshold for detected objects", type=float, default=0.4)
     parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=1)
     parser.add_argument("-d", "--debug", help="Debug output", action="store_true")
+    parser.add_argument("-u", "--unsafe", help="Crashes are not caught", action="store_true")
     parser.add_argument("-a", "--amount", help="Limit the amount of images computed", type=int, default=-1)
     parser.add_argument("-s", "--save", help="Save empty images", action="store_true")
     args = parser.parse_args()
@@ -119,7 +120,7 @@ def main():
 
         except Exception as e:
             lg.error(e)
-            if args.debug:
+            if args.unsafe:
                 raise e
 
 
