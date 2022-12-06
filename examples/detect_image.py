@@ -40,6 +40,7 @@ def draw_objects(draw, objs, labels):
 
 
 def main():
+    global file
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-m', '--model',
@@ -120,6 +121,8 @@ def main():
 
         except Exception as e:
             lg.error(e)
+            if "image file is truncated" in str(e):
+                os.remove(f"./input/{file}")
             if args.unsafe:
                 raise e
 
