@@ -71,7 +71,7 @@ def main():
             lg.info(f"Found {len(new_files)} new files")
             if len(new_files) > 0:
                 for index, file in enumerate(new_files):
-                    if index > args.amount:
+                    if index > args.amount > 0:
                         break
                     lg.info(f"[{index:2d}/{len(new_files)}] - {Colors.CYAN.value}{file:>}")
                     lg.info(f"{Colors.CYAN.value}{file}")
