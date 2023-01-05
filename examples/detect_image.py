@@ -114,7 +114,7 @@ def main():
                         if not os.path.exists("./sorted") and args.sort:
                             os.mkdir("./sorted")
                         if args.sort:
-                            images.save(f"./sorted/{file}")
+                            image.save(f"./sorted/{file}")
                         draw_objects(ImageDraw.Draw(image), objs, labels)
                         image.save(f"./output/{file}")
 
