@@ -75,7 +75,7 @@ def main():
                 for index, file in enumerate(new_files):
                     if index > args.amount > 0:
                         break
-                    lg.info(f"[{int(index:2d) + 1}/{len(new_files)}] - {Colors.CYAN.value}{file:>}")
+                    lg.info(f"[{int(index) + 1:2d}/{len(new_files)}] - {Colors.CYAN.value}{file:>}")
                     lg.info(f"{Colors.CYAN.value}{file}")
                     image = Image.open(f"./input/{file}")
                     _, scale = common.set_resized_input(
