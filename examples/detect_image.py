@@ -45,7 +45,7 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-m', '--model',
                         help='File path of .tflite file', type=str, default="test_data/ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite")
-    parser.add_argument('-l', '--labels', help='File path of labels file', type=str, default="test_data/coco_labels.txt")
+    parser.add_argument('-l', '--labels', help='File path of labels file', type=str, default="labels.txt")
     parser.add_argument("-t", "--threshold", help="Score threshold for detected objects", type=float, default=0.4)
     parser.add_argument("-c", "--count", help="Number of times to run inference", type=int, default=1)
     parser.add_argument("-d", "--debug", help="Debug output", action="store_true")

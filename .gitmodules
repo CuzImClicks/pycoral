@@ -7,3 +7,6 @@
 [submodule "libcoral"]
   path = libcoral
   url = https://github.com/google-coral/libcoral
+[submodule "models"]
+	path = models
+	url = https://github.com/CuzImClicks/models
