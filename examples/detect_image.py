@@ -128,6 +128,8 @@ def main():
             lg.error(e)
             if "image file is truncated" in str(e):
                 os.remove(f"./input/{file}")
+            elif "cannot identify image file" in str(e):
+                os.remove(f"./input/{file}")
             if args.unsafe:
                 raise e
 
