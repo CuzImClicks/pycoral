@@ -25,8 +25,7 @@ from pycoral.adapters import detect
 from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 
-from Logger import Logger, Colors, FileHandler
-
+from clicks_util.Logger import *
 
 def draw_objects(draw, objs, labels):
     """Draws the bounding box and label for each object."""
