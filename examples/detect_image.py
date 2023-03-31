@@ -52,6 +52,7 @@ def main():
     parser.add_argument("-a", "--amount", help="Limit the amount of images computed", type=int, default=-1)
     parser.add_argument("-s", "--save", help="Save empty images", action="store_true")
     parser.add_argument("--sort", help="Removes images that don't contain objects", action="store_true")
+    parser.add_argument("--classes", nargs="+", help="Only saves the images if they contain a specific class.")
     args = parser.parse_args()
 
     if args.debug:
@@ -112,7 +113,7 @@ def main():
                             os.mkdir("./output")
                         if not os.path.exists("./sorted") and args.sort:
                             os.mkdir("./sorted")
-                        if args.sort:
+                        if args.sort and (len(args.classes) == 0 or any([clss in args.classes for clss in objs])):
                             image.save(f"./sorted/{file}")
                         draw_objects(ImageDraw.Draw(image), objs, labels)
                         image.save(f"./output/{file}")
