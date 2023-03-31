@@ -137,5 +137,5 @@ def main():
 if __name__ == '__main__':
     colors = Logger.default_colors
     colors["INFO"] = ""
-    lg = Logger("ObjectDetection", formatter=Logger.minecraft_formatter, level_colors=colors, handlers=[FileHandler.latest_file_handler(Logger.minecraft_formatter)])
+    lg = Logger("ObjectDetection", formatter=Logger.minecraft_formatter, level_colors=colors, handlers=[FileHandler.latest_file_handler(Logger.minecraft_formatter), main_file_handler])
     main()
