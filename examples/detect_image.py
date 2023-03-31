@@ -113,7 +113,7 @@ def main():
                             os.mkdir("./output")
                         if not os.path.exists("./sorted") and args.sort:
                             os.mkdir("./sorted")
-                        if args.sort and (len(args.classes) == 0 or any([clss in args.classes for clss in objs])):
+                        if args.sort and (len(args.classes) == 0 or (not args.classes) or any([labels.get(clss.id) in args.classes for clss in objs])):
                             image.save(f"./sorted/{file}")
                         draw_objects(ImageDraw.Draw(image), objs, labels)
                         image.save(f"./output/{file}")
